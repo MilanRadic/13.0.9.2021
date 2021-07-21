@@ -1,0 +1,11 @@
+version: '2.1'
+
+services:
+  web:
+    env_file:
+        - .env
+    build: .
+    restart: always
+    command: ./start.sh
+    ports:
+      - "x:8000"

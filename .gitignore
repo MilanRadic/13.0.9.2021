@@ -1,0 +1,7 @@
+*.txt
+*.pyc
+.idea
+.env
+venv/
+envname/
+dvtrackingenv/
