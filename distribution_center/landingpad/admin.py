@@ -45,5 +45,4 @@ admin.site.register(Device, DeviceAdmin)
 
 
 
-
     

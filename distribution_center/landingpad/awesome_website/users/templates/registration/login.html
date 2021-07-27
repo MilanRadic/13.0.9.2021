@@ -1,18 +1,9 @@
-
-<!--users/templates/registration/login.html-->
-
-{% extends 'base.html' %}
-
-{% block content %}
-<h2>Login</h2>
-
-<form method="post">
+<form action="{% url 'magiclink:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" method="post">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Login">
-</form>
-
-<a href="{% url 'dashboard' %}">Back to dashboard</a>
-<a href="{% url 'password_reset' %}">Reset password</a>
-<a href="{% url 'register' %}">Register</a>
-{% endblock %}
+    {{ login_form }}
+    <button type='submit'>Send login email</button>
+    <form action="{% url 'magiclink:login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" method="post">
+        {% csrf_token %}
+        {{ login_form }}
+        <button type='submit'>Send login email</button>
+    </form>
