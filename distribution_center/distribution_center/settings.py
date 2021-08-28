@@ -61,6 +61,8 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
 
+    'allauth.socialaccount.providers.microsoft',
+
 
 
 ]
@@ -224,7 +226,7 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 
 
-    'magiclink.backends.MagicLinkBackend',
+    #'magiclink.backends.MagicLinkBackend',
 
 ]
 
