@@ -62,6 +62,9 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
 
     'allauth.socialaccount.providers.microsoft',
+    'magiclink',
+    'django_extensions',
+    'microsoft_auth',
 
 
 
@@ -101,6 +104,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'microsoft_auth.context_processors.microsoft',
 
             ],
         },
@@ -120,7 +124,7 @@ DATABASES = {
         'NAME': 'baza',
         'USER': 'postgres',
         'PASSWORD': '123',#visionect
-        'HOST': '192.168.64.102', ###db for docker container  192.168.0.38
+        'HOST': '192.168.64.105', ###db for docker container  192.168.0.38
         'PORT': '5432', ###5432 in docker 8888
     }
 }
@@ -219,14 +223,17 @@ REST_FRAMEWORK = {
 
 AUTHENTICATION_BACKENDS = [
    
+   'magiclink.backends.MagicLinkBackend',
+
+    'django.contrib.auth.backends.ModelBackend',
+
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
 
     # `allauth` specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend',
 
-
-    #'magiclink.backends.MagicLinkBackend',
+    'microsoft_auth.backends.MicrosoftAuthenticationBackend',
 
 ]
 
@@ -245,6 +252,149 @@ SOCIALACCOUNT_PROVIDERS = {
 }
 
 #EMAIL_BACKEND = env('DJANGO_EMAIL_BACKEND', default='django.core.mail.backends.console.EmailBackend')
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+EMAIL_HOST = 'smtp.pop-os.domain'
+EMAIL_HOST_USER = 'milankrka@gmail.com'
+EMAIL_PORT = 465
+EMAIL_HOST_PASSWORD = ''
+EMAIL_USE_SSL = True
+
+# Set Djangos login URL to the magiclink login page
+LOGIN_URL = 'magiclink:login'
+
+MAGICLINK_LOGIN_TEMPLATE_NAME = 'magiclink/login.html'
+MAGICLINK_LOGIN_SENT_TEMPLATE_NAME = 'magiclink/login_sent.html'
+MAGICLINK_LOGIN_FAILED_TEMPLATE_NAME = 'magiclink/login_failed.html'
+
+# Optional:
+# If this setting is set to False a user account will be created the first
+# time a user requests a login link.
+MAGICLINK_REQUIRE_SIGNUP = True
+MAGICLINK_SIGNUP_TEMPLATE_NAME = 'magiclink/signup.html'
+
+
+# Override the login page template. See 'Login page' in the Setup section
+MAGICLINK_LOGIN_TEMPLATE_NAME = 'magiclink/login.html'
+
+# Override the login page template. See 'Login sent page' in the Setup section
+MAGICLINK_LOGIN_SENT_TEMPLATE_NAME = 'magiclink/login_sent.html'
+
+# Override the template that shows when the user tries to login with a
+# magic link that is not valid. See 'Login failed page' in the Setup section
+MAGICLINK_LOGIN_FAILED_TEMPLATE_NAME = 'magiclink/login_failed.html'
+
+
+# If this setting is set to False a user account will be created the first time
+# a user requests a login link.
+MAGICLINK_REQUIRE_SIGNUP = True
+# Override the login page template. See 'Login sent page' in the Setup section
+MAGICLINK_SIGNUP_TEMPLATE_NAME = 'magiclink/signup.html'
+
+# Set Djangos login redirect URL to be used once the user opens the magic link
+# This will be used whenever a ?next parameter is not set on login
+LOGIN_REDIRECT_URL = '/accounts/profile/'
+
+# If a new user is created via the signup page use this setting to send them to
+# a different url than LOGIN_REDIRECT_URL when clicking the magic link
+# This will fall back to LOGIN_REDIRECT_URL
+MAGICLINK_SIGNUP_LOGIN_REDIRECT = '/welcome/'
+
+# Change the url a user is redirect to after requesting a magic link
+MAGICLINK_LOGIN_SENT_REDIRECT = 'magiclink:login_sent'
+
+# Ensure the branding of the login email is correct. This setting is not needed
+# if you override the `login_email.html` template
+MAGICLINK_EMAIL_STYLES = {
+    'logo_url': '',
+    'background-colour': '#ffffff',
+    'main-text-color': '#000000',
+    'button-background-color': '#0078be',
+    'button-text-color': '#ffffff',
+}
+
+# If you want to use your own email templates you can override the text and
+# html templates used with:
+MAGICLINK_EMAIL_TEMPLATE_NAME_TEXT = 'magiclink/login_email.txt'
+MAGICLINK_EMAIL_TEMPLATE_NAME_HTML = 'magiclink/login_email.html'
+
+# How long a magic link is valid for before returning an error
+MAGICLINK_AUTH_TIMEOUT = 300  # In second - Default is 5 minutes
+
+# Email address is not case sensitive. If this setting is set to True all
+# emails addresses will be set to lowercase before any checks are run against it
+MAGICLINK_IGNORE_EMAIL_CASE = True
+
+# When creating a user assign their email as the username (if the User model
+# has a username field)
+MAGICLINK_EMAIL_AS_USERNAME = True
+
+# Allow superusers to login via a magic link
+MAGICLINK_ALLOW_SUPERUSER_LOGIN = True
+
+# Allow staff users to login via a magic link
+MAGICLINK_ALLOW_STAFF_LOGIN = True
+
+# Ignore the Django user model's is_active flag for login requests
+MAGICLINK_IGNORE_IS_ACTIVE_FLAG = True
+
+# Override the default magic link length
+# Warning: Overriding this setting has security implications, shorter tokens
+# are much more susceptible to brute force attacks*
+MAGICLINK_TOKEN_LENGTH = 50
+
+# Require the user email to be included in the verification link
+# Warning: If this is set to false tokens are more vulnerable to brute force
+MAGICLINK_VERIFY_INCLUDE_EMAIL = True
+
+# Ensure the user who clicked magic link used the same browser as the
+# initial login request.
+# Note: This can cause issues on devices where the default browser is
+# different from the browser being used by the user such as on iOS)
+MAGICLINK_REQUIRE_SAME_BROWSER = True
+
+# Ensure the user who clicked magic link has the same IP address as the
+# initial login request.
+MAGICLINK_REQUIRE_SAME_IP = True
+
+# The number of times a login token can be used before being disabled
+MAGICLINK_TOKEN_USES = 1
+
+# How often a user can request a new login token (basic rate limiting).
+MAGICLINK_LOGIN_REQUEST_TIME_LIMIT = 30  # In seconds
+
+# Disable all other tokens for a user when a new token is requested
+MAGICLINK_ONE_TOKEN_PER_USER = True
+
+# Include basic anti spam form fields to help stop bots. False by default
+# Note: IF you use the default forms you will need to add CSS to your
+# page / stylesheet to hide the labels for the anti spam fields.
+# See the login.html or signup.html for an example
+MAGICLINK_ANTISPAM_FORMS = False
+# The shortest time a user can fill out each field and submit a form without
+# being considered a bot. The time is per field and defaults to 1 second.
+# This means if the form has 3 fields and the user will need to make more than
+# 3 seconds to fill out a form.
+MAGICLINK_ANTISPAM_FIELD_TIME = 1
+
+
+
+MICROSOFT_AUTH_CLIENT_ID = 'your-client-id-from-apps.dev.microsoft.com'
+MICROSOFT_AUTH_CLIENT_SECRET = 'your-client-secret-from-apps.dev.microsoft.com'
+# Tenant ID is also needed for single tenant applications
+# MICROSOFT_AUTH_TENANT_ID = 'your-tenant-id-from-apps.dev.microsoft.com'
+
+# pick one MICROSOFT_AUTH_LOGIN_TYPE value
+# Microsoft authentication
+# include Microsoft Accounts, Office 365 Enterpirse and Azure AD accounts
+MICROSOFT_AUTH_LOGIN_TYPE = 'ma'
+
+# Xbox Live authentication
+MICROSOFT_AUTH_LOGIN_TYPE = 'xbl'  # Xbox Live authentication
+
+
+
 
 
 

@@ -55,6 +55,9 @@ urlpatterns = [
     path('', include("users.urls")),
     #path('api-auth/', include('rest_framework.urls')),
     path('accounts/', include('allauth.urls')),
+    path('auth/', include('magiclink.urls', namespace='magiclink')),
+    path('microsoft/', include('microsoft_auth.urls', namespace='microsoft')),
+    
 ]
 
 
