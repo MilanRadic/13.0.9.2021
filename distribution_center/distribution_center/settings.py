@@ -124,7 +124,7 @@ DATABASES = {
         'NAME': 'baza',
         'USER': 'postgres',
         'PASSWORD': '123',#visionect
-        'HOST': '192.168.64.105', ###db for docker container  192.168.0.38
+        'HOST': '192.168.64.100', ###db for docker container  192.168.0.38
         'PORT': '5432', ###5432 in docker 8888
     }
 }
@@ -258,8 +258,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_HOST = 'smtp.pop-os.domain'
 EMAIL_HOST_USER = 'milankrka@gmail.com'
 EMAIL_PORT = 465
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_PASSWORD = 'milanradic4102'
 EMAIL_USE_SSL = True
+#from django.core.mail import send_mail
+
+#send_mail(subject, content, from_email, to_list, fail_silently=False)
 
 # Set Djangos login URL to the magiclink login page
 LOGIN_URL = 'magiclink:login'
@@ -379,11 +382,12 @@ MAGICLINK_ANTISPAM_FORMS = False
 MAGICLINK_ANTISPAM_FIELD_TIME = 1
 
 
-
-MICROSOFT_AUTH_CLIENT_ID = 'your-client-id-from-apps.dev.microsoft.com'
-MICROSOFT_AUTH_CLIENT_SECRET = 'your-client-secret-from-apps.dev.microsoft.com'
+# values you got from step 2 from your Mirosoft app
+MICROSOFT_AUTH_CLIENT_ID = '78d2209f-56e5-4032-aba0-e998806f3643'
+MICROSOFT_AUTH_CLIENT_SECRET = 'e1cb9869-16c7-4c68-b69c-85adc6dd9911'
 # Tenant ID is also needed for single tenant applications
-# MICROSOFT_AUTH_TENANT_ID = 'your-tenant-id-from-apps.dev.microsoft.com'
+MICROSOFT_AUTH_TENANT_ID = 'f8cdef31-a31e-4b4a-93e4-5f571e91255a'
+AUTHORITY = "https://login.microsoftonline.com/Enter_the_Tenant_Name_Here"
 
 # pick one MICROSOFT_AUTH_LOGIN_TYPE value
 # Microsoft authentication
